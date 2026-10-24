@@ -123,3 +123,5 @@ client.getDirectoryContents("/").catch((err) => {
     }
 });
 ```
+
+`url` is the request URL without its query string or fragment (in compatibility mode the token is sent in the query string).

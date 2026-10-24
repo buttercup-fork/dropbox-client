@@ -8,6 +8,7 @@
  * **Bugfix**:
    * Paths/filenames are now normalised to NFC Unicode form before being sent to Dropbox, so vaults with diacritics in their filename (e.g. `sö.bcup`) can be opened on iOS, where the OS stores filenames in NFD form (buttercup/buttercup-mobile#147)
    * `putFileContents`'s query-string `arg` now uses the same ASCII-safe JSON escaping as the other content-endpoint requests, instead of raw `JSON.stringify`
+   * The error info `url` no longer carries the query string, where compatibility mode sends the access token (B-632)
 
 ## v2.2.0
 _2023-11-11_

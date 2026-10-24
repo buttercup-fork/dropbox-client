@@ -16,7 +16,9 @@ export function handleBadResponse(response: Response): void {
             info: {
                 status: response.status,
                 statusText: response.statusText,
-                url: response.url
+                // In compat mode the token is in the query string: keep the
+                // origin and path only
+                url: stripQuery(response.url)
             }
         }, `Request failed: ${response.status} ${response.statusText}`);
     }
@@ -38,4 +40,11 @@ export async function request(config: RequestConfig): Promise<Response> {
         body: config.body as BodyInit
     });
     return response;
+}
+
+/**
+ * Remove the query string and fragment from a URL
+ */
+export function stripQuery(url: string | undefined): string | undefined {
+    return typeof url === "string" ? url.split(/[?#]/)[0] : url;
 }
