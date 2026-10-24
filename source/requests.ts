@@ -1,10 +1,13 @@
 import { HotPatcher } from "hot-patcher";
+import { Layerr } from "layerr";
+import { MAX_DIRECTORY_PAGES } from "./constants.js";
 import { convertDropboxPathInfo, urlSafeJSONStringify } from "./convert.js";
 import { handleBadResponse, RequestConfig } from "./request.js";
 import { DropboxClientConfig, DropboxItemResult, DropboxPathInfo } from "./types.js";
 
 const DELETE_URL = "https://api.dropboxapi.com/2/files/delete_v2";
 const DIRECTORY_CONTENTS_URL = "https://api.dropboxapi.com/2/files/list_folder";
+const DIRECTORY_CONTENTS_CONTINUE_URL = "https://api.dropboxapi.com/2/files/list_folder/continue";
 const DIRECTORY_CREATE_URL = "https://api.dropboxapi.com/2/files/create_folder_v2";
 const DOWNLOAD_URL = "https://content.dropboxapi.com/2/files/download";
 const METADATA_URL = "https://api.dropboxapi.com/2/files/get_metadata";
@@ -95,7 +98,7 @@ export async function getDirectoryContents(
         headers = {}
     } = clientConfig;
     const path = dirPath === "/" ? "" : dirPath;
-    const config: RequestConfig = {
+    let config: RequestConfig = {
         method: "POST",
         url: DIRECTORY_CONTENTS_URL,
         headers: compat ? {
@@ -122,12 +125,32 @@ export async function getDirectoryContents(
             include_mounted_folders: true
         })
     };
-    const response = await patcher.execute<Promise<Response>>("request", config);
-    handleBadResponse(response);
-    const { entries } = await response.json() as {
-        entries: Array<DropboxItemResult>;
-    };
-    return entries.map(convertDropboxPathInfo);
+    const items: Array<DropboxPathInfo> = [];
+    let pages = 0;
+    // Results are paged: follow the cursor until has_more is false
+    while (true) {
+        if (++pages > MAX_DIRECTORY_PAGES) {
+            throw new Layerr(`Too many directory pages (over ${MAX_DIRECTORY_PAGES})`);
+        }
+        const response = await patcher.execute<Promise<Response>>("request", config);
+        handleBadResponse(response);
+        const { cursor, entries, has_more: hasMore } = await response.json() as {
+            cursor?: string;
+            entries: Array<DropboxItemResult>;
+            has_more?: boolean;
+        };
+        items.push(...entries.map(convertDropboxPathInfo));
+        if (!hasMore) break;
+        if (!cursor) {
+            throw new Layerr("Directory listing has more entries but no cursor");
+        }
+        config = {
+            ...config,
+            url: DIRECTORY_CONTENTS_CONTINUE_URL,
+            body: JSON.stringify({ cursor })
+        };
+    }
+    return items;
 }
 
 export async function getFileContents(

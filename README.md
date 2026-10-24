@@ -125,3 +125,5 @@ client.getDirectoryContents("/").catch((err) => {
 ```
 
 `url` is the request URL without its query string or fragment (in compatibility mode the token is sent in the query string).
+
+`getDirectoryContents` follows Dropbox's listing cursor, so it returns every entry in the folder; it fails after 1000 pages rather than looping forever.
