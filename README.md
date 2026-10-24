@@ -88,6 +88,19 @@ const client = new DropboxClient("my-token", {
 });
 ```
 
+### Timeouts
+
+Requests are aborted if no response arrives in time: uploads and downloads (`content.dropboxapi.com`) after 10 minutes, every other request after 60 seconds. The limits cover sending the request and waiting for the response, not reading its body. Set them in milliseconds, or `0` for no limit:
+
+```typescript
+const client = new DropboxClient("my-token", {
+    contentTimeout: 5 * 60 * 1000,
+    timeout: 30 * 1000
+});
+```
+
+An aborted request rejects with the `fetch` abort error, not a `Layerr`.
+
 ### Fs
 
 An `fs`-like interface is also available:

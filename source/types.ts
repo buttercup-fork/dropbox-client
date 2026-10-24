@@ -7,7 +7,17 @@ export interface DropboxClientConfig {
      * @deprecated Use `compatCorsHack` instead
      */
     compatPutCorsHack?: boolean;
+    /**
+     * Milliseconds to wait for an upload or download (content.dropboxapi.com),
+     * 0 for no limit. Default 10 minutes.
+     */
+    contentTimeout?: number;
     headers?: Record<string, string>;
+    /**
+     * Milliseconds to wait for any other request, 0 for no limit. Default 60
+     * seconds.
+     */
+    timeout?: number;
 }
 
 export interface DropboxItemResult {

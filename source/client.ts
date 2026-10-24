@@ -1,8 +1,15 @@
 import { HotPatcher } from "hot-patcher";
+import URLParse from "url-parse";
 import { createDirectory, deleteFile, getDirectoryContents, getFileContents, getMetadata, putFileContents } from "./requests.js";
 import { DropboxFSInterface } from "./fs.js";
-import { request } from "./request.js";
+import { request, RequestConfig } from "./request.js";
+import { CONTENT_HOST, CONTENT_TIMEOUT, REQUEST_TIMEOUT } from "./constants.js";
 import { DropboxClientConfig, DropboxPathInfo } from "./types.js";
+
+function isContentURL(url: string): boolean {
+    // url-parse rather than URL: React Native's URL is incomplete
+    return new URLParse(url).hostname === CONTENT_HOST;
+}
 
 /**
  * Normalise a path to NFC (composed) Unicode form before sending it to
@@ -24,7 +31,15 @@ export class DropboxClient {
     private __token: string;
 
     constructor(token: string, config: DropboxClientConfig = {}) {
-        this.patcher.patch("request", request);
+        const { contentTimeout = CONTENT_TIMEOUT, timeout = REQUEST_TIMEOUT } = config;
+        // Requests made through the patcher by other code (core's attachment
+        // download) get the same limits
+        this.patcher.patch("request", (requestConfig: RequestConfig) =>
+            request({
+                timeout: isContentURL(requestConfig.url) ? contentTimeout : timeout,
+                ...requestConfig
+            })
+        );
         this.__token = token;
         this._config = config;
         this.fs = new DropboxFSInterface(this);
