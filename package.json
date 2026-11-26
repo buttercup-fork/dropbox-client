@@ -1,6 +1,6 @@
 {
-  "name": "@buttercup/dropbox-client",
-  "version": "2.2.0",
+  "name": "@buttercup-fork/dropbox-client",
+  "version": "3.0.0",
   "description": "Dropbox client library",
   "exports": "./dist/index.js",
   "react-native": "./dist/index.js",
@@ -47,5 +47,8 @@
     "rimraf": "^6.1.3",
     "sinon": "^22.1.0",
     "typescript": "^6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

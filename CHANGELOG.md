@@ -1,7 +1,9 @@
 # Dropbox Client changelog
 
-## Unreleased (Codekunde fork)
+## v3.0.0
+_2026-11-26_ (CodeKunde fork)
 
+ * **New package name:** `@buttercup-fork/dropbox-client` on npm (import from it instead of `@buttercup/dropbox-client`), staged from GitHub Actions through trusted publishing with provenance (`publish.yml`, started by hand); the package name `@buttercup/dropbox-client` stays upstream's
  * **Breaking**: requires NodeJS 22+; CI runs on branch pushes only (Node 22 and 24). Uses the built-in `fetch` on every platform; `@buttercup/fetch` and `node-fetch` (and its deprecated `node-domexception`) are no longer dependencies
  * `prepare` script, so installing from a git URL builds `dist/`
  * Requests time out: uploads and downloads after 10 minutes (`contentTimeout`), every other request after 60 seconds (`timeout`); `0` turns a limit off. Requests other code makes through the client's `request` hook get the same limits (B-634)
