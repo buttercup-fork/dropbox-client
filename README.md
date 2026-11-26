@@ -11,9 +11,9 @@ This library is a barebones HTTP client that makes requests directly to Dropbox'
 
 ## Installation
 
-Simply run `npm install github:buttercup-fork/dropbox-client --save` to install. This fork isn't published to npm; the package builds itself on install.
+Simply run `npm install @buttercup-fork/dropbox-client --save` to install. The fork is published on npm as `@buttercup-fork/dropbox-client` (`@buttercup/dropbox-client` on npm is upstream's 2.2.0).
 
-The latest version (v2) requires an [ESM](https://nodejs.org/api/esm.html) environment to run. It is not available to standard CommonJS projects.
+Version 2 and later require an [ESM](https://nodejs.org/api/esm.html) environment to run. It is not available to standard CommonJS projects.
 
 ## Usage
 
@@ -22,7 +22,7 @@ The latest version (v2) requires an [ESM](https://nodejs.org/api/esm.html) envir
 You can generate Dropbox authorisation URLs by using `generateAuthorisationURL`:
 
 ```typescript
-import { generateAuthorisationURL } from "@buttercup/dropbox-client";
+import { generateAuthorisationURL } from "@buttercup-fork/dropbox-client";
 
 const url = generateAuthorisationURL("client-id", "https://redir.example.com");
 // open `url`
@@ -33,7 +33,7 @@ const url = generateAuthorisationURL("client-id", "https://redir.example.com");
 Use the `DropboxClient` class to create a client interface:
 
 ```typescript
-import { generateAuthorisationURL } from "@buttercup/dropbox-client";
+import { generateAuthorisationURL } from "@buttercup-fork/dropbox-client";
 
 const client = new DropboxClient("my-token");
 ```
@@ -106,7 +106,7 @@ An aborted request rejects with the `fetch` abort error, not a `Layerr`.
 An `fs`-like interface is also available:
 
 ```typescript
-import { generateAuthorisationURL } from "@buttercup/dropbox-client";
+import { generateAuthorisationURL } from "@buttercup-fork/dropbox-client";
 
 const client = new DropboxClient("my-token");
 
